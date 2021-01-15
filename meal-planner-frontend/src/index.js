@@ -30,7 +30,7 @@ function makeDays(json) {
 
         day.meals.forEach(meal => {
             let liMeal = document.createElement('li')
-            liMeal.innerText = meal.name
+            liMeal.innerText = `${meal.meal_time}: ${meal.name}`
             mealList.appendChild(liMeal)
         })
 
@@ -42,7 +42,11 @@ function makeDays(json) {
 class Day {
     constructor(info) {
         this.name = info.name
-        this.meals = info.meals.map(meal => new Meal(meal))
+        this._meals = info.meals.map(meal => new Meal(meal))
+    }
+
+    get meals() {
+        return this._meals.sort((a, b) => a.mealNum - b.mealNum)
     }
 }
 
@@ -50,5 +54,17 @@ class Meal {
     constructor(info) {
         this.name = info.name
         this.meal_time = info.meal_time
+    }
+
+    get mealNum() {
+        if (this.meal_time == 'breakfast') {
+            return 4;
+        } else if (this.meal_time == 'lunch') {
+            return 3;
+        } else if (this.meal_time == 'dinner') {
+            return 2;
+        } else {
+            return 0;
+        }
     }
 }

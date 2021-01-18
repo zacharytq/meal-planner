@@ -3,6 +3,7 @@ const mealDiv = document.getElementById('form');
 const newMealForm = document.getElementById('new-meal-form');
 const addMealButton = document.getElementById('show-meal-form');
 let days = [];
+const mealTimes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchDays()
@@ -17,12 +18,20 @@ function showForm(){
 }
 
 function makeForm() {
-    let select = document.createElement('select')
+    let select = document.getElementById('day-select');
+    let selectMealTime = document.getElementById('meal-time-select');
+
     days.forEach(day => {
         let dayOption = new Option(day.name, day.day_id);
         select.add(dayOption)
     })
-    newMealForm.appendChild(select)
+
+    mealTimes.forEach(mealTime => {
+        let mealOption = new Option(mealTime, mealTime);
+        selectMealTime.add(mealOption)
+    })
+
+    
 }
 
 function hideForm(){
@@ -86,11 +95,11 @@ class Meal {
     }
 
     get mealNum() {
-        if (this.meal_time == 'breakfast') {
+        if (this.meal_time == 'Breakfast') {
             return 4;
-        } else if (this.meal_time == 'lunch') {
+        } else if (this.meal_time == 'Lunch') {
             return 3;
-        } else if (this.meal_time == 'dinner') {
+        } else if (this.meal_time == 'Dinner') {
             return 2;
         } else {
             return 0;

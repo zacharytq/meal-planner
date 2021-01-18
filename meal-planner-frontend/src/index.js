@@ -1,8 +1,24 @@
 const week = document.getElementById('week');
+const mealDiv = document.getElementById('form');
+const newMealForm = document.getElementById('new-meal-form');
+const addMealButton = document.getElementById('show-meal-form');
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchDays()
+    showForm()
 })
+
+function showForm(){
+    addMealButton.addEventListener('click', () => {
+        newMealForm.style.display = 'block'
+        addMealButton.style.display = 'none'
+    })
+}
+
+function hideForm(){
+    newMealForm.style.display = 'none'
+    addMealButton.style.display = 'block'
+}
 
 function fetchDays() {
     fetch('http://localhost:3000/days')

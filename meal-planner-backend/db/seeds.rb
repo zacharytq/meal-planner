@@ -17,8 +17,8 @@ days = [
 ]
 
 meals = [
-    {name: 'salad', meal_time: 'lunch', day_id: 1},
-    {name: 'twinkie', meal_time: 'snack', day_id: 4}
+    {name: 'salad', meal_time: 'Lunch', day_id: 1},
+    {name: 'twinkie', meal_time: 'Snack', day_id: 4}
 ]
 
 days.each do |name|

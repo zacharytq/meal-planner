@@ -2,6 +2,7 @@ const week = document.getElementById('week');
 const mealDiv = document.getElementById('form');
 const newMealForm = document.getElementById('new-meal-form');
 const addMealButton = document.getElementById('show-meal-form');
+let days = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchDays()
@@ -13,6 +14,15 @@ function showForm(){
         newMealForm.style.display = 'block'
         addMealButton.style.display = 'none'
     })
+}
+
+function makeForm() {
+    let select = document.createElement('select')
+    days.forEach(day => {
+        let dayOption = new Option(day.name, day.day_id);
+        select.add(dayOption)
+    })
+    newMealForm.appendChild(select)
 }
 
 function hideForm(){
@@ -37,6 +47,7 @@ function makeDays(json) {
     let list = document.createElement('ul');
     json.forEach(element => {
         let day = new Day(element)
+        days.push(day)
         let mealList = document.createElement('ul')
         let li = document.createElement('li')
         let h2 = document.createElement('h2')
@@ -53,12 +64,14 @@ function makeDays(json) {
         li.appendChild(mealList)
     });
     week.appendChild(list)
+    makeForm()
 }
 
 class Day {
     constructor(info) {
         this.name = info.name
         this._meals = info.meals.map(meal => new Meal(meal))
+        this.day_id = info.id
     }
 
     get meals() {

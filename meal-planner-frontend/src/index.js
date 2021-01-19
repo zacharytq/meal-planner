@@ -2,12 +2,14 @@ const week = document.getElementById('week');
 const mealDiv = document.getElementById('form');
 const newMealForm = document.getElementById('new-meal-form');
 const addMealButton = document.getElementById('show-meal-form');
+const reset = document.getElementById('reset-plan')
 let days = [];
 const mealTimes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchDays()
     showForm()
+    resetPlan()
 })
 
 function showForm(){
@@ -17,9 +19,27 @@ function showForm(){
     })
 }
 
+function resetPlan() {
+    reset.addEventListener('click', () => {
+        fetch('http://localhost:3000/meals', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accepts': 'application/json'
+            }
+        })
+        days.forEach(day => {
+            day.meals.splice(0, day.meals.length)
+            refreshDay(day)
+        })
+    })
+}
+
 function makeForm() {
+    newMealForm.reset()
     let select = document.getElementById('day-select');
     let selectMealTime = document.getElementById('meal-time-select');
+    let mealName = document.getElementById('meal-name');
 
     days.forEach(day => {
         let dayOption = new Option(day.name, day.day_id);
@@ -31,7 +51,42 @@ function makeForm() {
         selectMealTime.add(mealOption)
     })
 
-    
+    newMealForm.addEventListener('submit', async event => {
+        event.preventDefault()
+        
+        await fetch('http://localhost:3000/meals', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({'day_id': select.value, 'meal_time': selectMealTime.value, 'name': mealName.value})
+        })
+        .then(response => response.json())
+        .then(json => addMealToDOM(json))
+        .catch(data => console.log(data))
+    })
+}
+
+function addMealToDOM(json) {
+    let day = days.find(day => day.day_id === json['day_id']);
+    let meal = new Meal(json);
+    day.meals.push(meal)
+    refreshDay(day)
+    makeForm()
+    hideForm()
+}
+
+function refreshDay(day) {
+    let dayMeals = document.getElementById(`day-${day.day_id}-meals`);
+    while (dayMeals.firstChild) {
+        dayMeals.removeChild(dayMeals.firstChild)
+    }
+    day.meals.forEach(meal => {
+        let li = document.createElement('li')
+        li.innerText = `${meal.meal_time}: ${meal.name}`
+        dayMeals.appendChild(li)
+    })
 }
 
 function hideForm(){
@@ -61,6 +116,8 @@ function makeDays(json) {
         let li = document.createElement('li')
         let h2 = document.createElement('h2')
         h2.innerText = day.name
+        li.id = `day-${day.day_id}`;
+        mealList.id = `day-${day.day_id}-meals`
         li.appendChild(h2)
         list.appendChild(li)
 
